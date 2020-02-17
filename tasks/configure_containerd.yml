@@ -1,0 +1,40 @@
+---
+# Создаем директорю для конфигурационного файла
+- name: CONTAINERD | Creating folders
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: u+rwx
+  loop:
+    - "{{ containerd_conf_dir }}"
+    - "{{ containerd_plugin_dir }}"
+
+# Создаем конфигурационный файл systemd сервиса CONTAINERD    
+- name: CONTAINERD | Creating containerd.service file
+  template:
+    src: containerd.service.j2
+    dest: /etc/systemd/system/containerd.service
+  notify: CONTAINERD | Reload systemd
+
+# Создаем конфигурационный файл CONTAINERD
+- name: CONTAINERD | Creating configuration file for containerd service
+  template:
+    src: config.toml.j2
+    dest: "{{ containerd_conf_dir }}/config.toml"
+    owner: root
+    group: root
+    mode: 0644
+  notify: CONTAINERD | Restart containerd
+
+# Запускаем принудительное исполнение handlers
+- name: CONTAINERD | Flush handlers
+  meta: flush_handlers
+
+# Убеждаемся что CONTAINERD сервис запущен и добавлен в автозапуск  
+- name: CONTAINERD | Ensure containerd service is started and enabled at boot
+  service:
+    name: containerd
+    state: started
+    enabled: true

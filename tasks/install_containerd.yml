@@ -1,0 +1,140 @@
+---
+# Проверяем наличие бинарных файлов
+- name: CONTAINERD | Check containerd binary exists
+  stat:
+    path: "{{ bin_path }}/{{ item }}"
+    checksum_algorithm: "{{ containerd[containerd_version].checksum_algorithm }}"
+  register: containerd_bin
+  loop: "{{ containerd_bin_name }}"
+
+# Получаем информацию о сервисах на удаленной машине
+- name: CONTAINERD | Get service facts
+  service_facts: {}
+
+# Создаем переменную install_containerd=true
+# Если:
+## Бинарные файлы отсутствуют или
+## Контрольная сумма бинарных файлов не соответствует требуемой
+- name: CONTAINERD | Set 'install_containerd' to true
+  set_fact:
+    install_containerd: true
+  loop: "{{ containerd_bin.results }}"
+  when: item.stat.checksum|default() != containerd[containerd_version][item.item].checksum
+
+- name: CONTAINERD |(when install_containerd == TRUE)
+  block:
+    # Создаем папки на удаленной машине
+    - name: CONTAINERD | Creating folders
+      file:
+        path: "{{ distribution_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: u+rwx
+
+    # Проверяем наличие архива на удаленной машине
+    - name: CONTAINERD | Check that the containerd archive exists on the destination host
+      stat:
+        path: "{{ distribution_path }}/{{ containerd[containerd_version].source_url | basename }}"
+        checksum_algorithm: "{{ containerd[containerd_version].checksum_algorithm }}"
+      register: containerd_archive
+  when: install_containerd|default(false)
+
+# Блок заданий
+# Исполняется если:
+## Использвание downloader сервера включено - use_downloader=true и
+## Архива нет на удаленном сервере или Контрольная сумма архива не совпадает с указанной в переменной - containerd[containerd_version].archive_checksum
+- name: CONTAINERD |(when use_downloader == TRUE)
+  block:
+    # Создаем папку на downloader сервере (в данную папку будет осуществляться скачивание архива из сети интернет)
+    - name: CONTAINERD | Creating default folder for components
+      file:
+        path: "{{ downloader_source_folder }}"
+        state: directory
+        mode: u+rwx
+      run_once: true
+      delegate_to: "{{ downloader }}"
+
+    # Проверяем наличие архива на downloader сервере
+    - name: CONTAINERD | Check that the containerd archive exists on the {{ downloader }}
+      stat:
+        path: "{{ downloader_source_folder }}/{{ containerd[containerd_version].source_url | basename }}"
+        checksum_algorithm: "{{ containerd[containerd_version].checksum_algorithm }}"
+      register: downloader_distr
+      delegate_to: "{{ downloader }}"
+
+    # Выкачиваем архив напрямую из сети интернет
+    # Если:
+    ## Если архива нет на downloader сервере или Контрольная сумма архива не совпадает с указанной в переменной - containerd[containerd_version].archive_checksum)
+    - name: CONTAINERD | Download containerd archive to {{ downloader }}
+      get_url:
+        url: "{{ containerd[containerd_version].source_url }}"
+        dest: "{{ downloader_source_folder }}"
+        checksum: "{{ containerd[containerd_version].checksum_algorithm }}:{{ containerd[containerd_version].archive_checksum }}"
+      run_once: true
+      delegate_to: "{{ downloader }}"
+      when: downloader_distr.stat.checksum|default() != containerd[containerd_version].archive_checksum
+
+    # Выполняем синхронизацию архива с удаленной машиной
+    # Если:
+    ## downloader сервером не является localhost (не та машина на которой осуществляется запуск playbook)
+    - name: CONTAINERD | Copy from {{ downloader }} to remote host
+      synchronize:
+        checksum: true
+        src: "{{ downloader_source_folder }}/{{ containerd[containerd_version].source_url | basename }}"
+        dest: "{{ distribution_path }}"
+      delegate_to: "{{ downloader }}"
+      notify: CONTAINERD | Ensure service is stopped
+      when: downloader != "localhost"
+
+    # Выполняем копирование архива на удаленную машину
+    # Если:
+    ## downloader сервером является localhost (машина на которой осуществляется запуск playbook)
+    - name: CONTAINERD | Copy from {{ downloader }} to remote host
+      copy:
+        src: "{{ downloader_source_folder }}/{{ containerd[containerd_version].source_url | basename }}"
+        dest: "{{ distribution_path }}"
+        owner: root
+        group: root
+        mode: u+rwx
+      notify: CONTAINERD | Ensure service is stopped
+      when: downloader == "localhost"
+  when:
+    - install_containerd|default(false)
+    - use_downloader
+    - containerd_archive.stat.checksum|default() != containerd[containerd_version].archive_checksum
+
+# Выкачиваем архив напрямую из сети интернет
+# Если:
+## Переменная install_containerd=true и
+## Использвание downloader сервера отключено: use_downloader=false и
+## Архива нет на удаленном сервере или Контрольная сумма архива не совпадает с указанной в переменной - containerd[containerd_version].archive_checksum)
+- name: CONTAINERD | Download containerd archive to host
+  get_url:
+    url: "{{ containerd[containerd_version].source_url }}"
+    dest: "{{ distribution_path }}"
+    checksum: "{{ containerd[containerd_version].checksum_algorithm }}:{{ containerd[containerd_version].archive_checksum }}"
+    owner: root
+    group: root
+  notify: CONTAINERD | Ensure service is stopped
+  when:
+    - install_containerd|default(false)
+    - not use_downloader
+    - containerd_archive.stat.checksum|default() != containerd[containerd_version].archive_checksum
+
+# Запускаем принудительное исполнение handlers
+- name: CONTAINERD | Flush handlers
+  meta: flush_handlers
+
+# Распаковываем архив на удаленном сервере
+# Если:
+## Переменная install_containerd=true
+- name: CONTAINERD | Extract containerd archive into {{ bin_path }}
+  unarchive:
+    src: "{{ distribution_path }}/{{ containerd[containerd_version].source_url | basename }}"
+    dest: "{{ bin_path }}"
+    owner: root
+    group: root
+    remote_src: true
+    extra_opts: "{{ containerd[containerd_version].extra_opts }}"
+  when: install_containerd|default(false)

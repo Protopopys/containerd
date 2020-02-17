@@ -1,0 +1,7 @@
+---
+required_packages:
+  - libseccomp-devel
+  - btrfs-progs-devel
+  - socat
+  - device-mapper-persistent-data
+  - lvm2

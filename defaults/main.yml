@@ -1,0 +1,54 @@
+# Вкл/Выкл использование downloader сервера (актуально если на удаленном хосте нет доступа к сети интернет или же количество хостов на которые необходимо доставить файлы
+use_downloader: true
+# Машина через которую осуществляется выкачивание файлов из сети интернет
+downloader: localhost
+# При использовании downloader в данную папку будет осуществлятся скачивание файлов, в дальнейшем распространение файлов на удаленные хосты осуществляется из данной папки downloader сервера.
+downloader_source_folder: ~/DISTR
+# Папка в которую будет осуществлена загрузка установочного архива
+distribution_path: "/opt/DISTR"
+
+# Устаноавливаемая версия
+containerd_version: v1.3.3
+# Папка на удаленном сервере куда будет осуществляться доставка архива с дальнейшей распаковкой
+bin_path: /usr/local/bin
+# Имена устанавливаемых компонентов
+containerd_bin_name:
+    - containerd
+    - containerd-shim
+    - containerd-shim-runc-v1
+    - containerd-shim-runc-v2
+    - containerd-stress
+    - ctr
+
+# Папка для конфигурационных файлов
+containerd_conf_dir: /etc/containerd
+# Папка для данных
+containerd_data_dir: /var/lib/containerd
+# Папка для плагинов
+containerd_plugin_dir: /opt/containerd
+# Containerd options
+containerd_use_systemd_cgroup: true
+
+
+containerd:
+  v1.3.3:
+    source_url: https://github.com/containerd/containerd/releases/download/v1.3.3/containerd-1.3.3.linux-amd64.tar.gz
+    # Контрольная сумма скачаемого архива
+    checksum_algorithm: "sha256"
+    archive_checksum: b76d54ca86b69871266c29d0f1ad56f37892ab4879b82d34909ab94918b83d16
+    # Параметр распаковки архива на удаленном сервере
+    extra_opts: --strip-components=1
+    # Контрольная сумма бинарных файлов
+    containerd:
+        checksum: b0c2df3e3146d6c53e6097083efc616c475b62ad6a1434a2833d82e7e2434e59
+    containerd-shim:  
+        checksum: b0677cb7ee299bae38f533391acbc506926fc3b6d6bea8473e8668def6214b63
+    containerd-shim-runc-v1:  
+        checksum: 38c52fff86401bbb1bd051b5346e3a35fc92c4b0ae9140e647879ad6b3bb3234
+    containerd-shim-runc-v2: 
+        checksum: 51ff756d1d2b16ad30f158930e9c3deeeabebf23fedefbacf688a69070899791
+    containerd-stress:  
+        checksum: 721e3895e32ebc426f394e451b40ef4fb9d5adeb0b8d9d1b010b8d7f2c7aa5d8
+    ctr:  
+        checksum: 9ae0b69747fac3e7d4f1c1ba3f20548348a6acc5d828b54a6a9efc7afcb7f8df  
+      

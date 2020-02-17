@@ -1,0 +1,6 @@
+---
+required_packages:
+  - libseccomp-devel
+  - libbtrfs-devel
+  - btrfs-progs
+  - socat
