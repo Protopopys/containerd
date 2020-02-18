@@ -20,6 +20,18 @@ containerd_bin_name:
     - containerd-stress
     - ctr
 
+containerd_config:
+  grpc:
+    max_recv_message_size: 16777216
+    max_send_message_size: 16777216
+  debug:
+    level: ""
+  registries:
+    "docker.io": "https://registry-1.docker.io"
+  max_container_log_line_size: '-1'
+  # containerd:
+  #   snapshotter: native
+
 # Папка для конфигурационных файлов
 containerd_conf_dir: /etc/containerd
 # Папка для данных
