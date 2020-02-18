@@ -9,7 +9,7 @@ distribution_path: "/opt/DISTR"
 
 # Устаноавливаемая версия
 containerd_version: v1.3.3
-# Папка на удаленном сервере куда будет осуществляться доставка архива с дальнейшей распаковкой
+# Root директория для компонентов
 bin_path: /usr/local/bin
 # Имена устанавливаемых компонентов
 containerd_bin_name:
@@ -19,18 +19,6 @@ containerd_bin_name:
     - containerd-shim-runc-v2
     - containerd-stress
     - ctr
-
-containerd_config:
-  grpc:
-    max_recv_message_size: 16777216
-    max_send_message_size: 16777216
-  debug:
-    level: ""
-  registries:
-    "docker.io": "https://registry-1.docker.io"
-  max_container_log_line_size: '-1'
-  # containerd:
-  #   snapshotter: native
 
 # Папка для конфигурационных файлов
 containerd_conf_dir: /etc/containerd

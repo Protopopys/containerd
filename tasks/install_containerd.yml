@@ -7,10 +7,6 @@
   register: containerd_bin
   loop: "{{ containerd_bin_name }}"
 
-# Получаем информацию о сервисах на удаленной машине
-- name: CONTAINERD | Get service facts
-  service_facts: {}
-
 # Создаем переменную install_containerd=true
 # Если:
 ## Бинарные файлы отсутствуют или
@@ -23,6 +19,10 @@
 
 - name: CONTAINERD |(when install_containerd == TRUE)
   block:
+    # Получаем информацию о сервисах на удаленной машине
+    - name: CONTAINERD | Get service facts
+      service_facts: {}
+
     # Создаем папки на удаленной машине
     - name: CONTAINERD | Creating folders
       file:
@@ -31,7 +31,7 @@
         owner: root
         group: root
         mode: u+rwx
-
+      
     # Проверяем наличие архива на удаленной машине
     - name: CONTAINERD | Check that the containerd archive exists on the destination host
       stat:
