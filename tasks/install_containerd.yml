@@ -53,7 +53,7 @@
         state: directory
         mode: u+rwx
       run_once: true
-      delegate_to: "{{ downloader }}"
+      delegate_to: localhost
 
     # Проверяем наличие архива на downloader сервере
     - name: CONTAINERD | Check that the containerd archive exists on the {{ downloader }}
@@ -61,7 +61,7 @@
         path: "{{ downloader_source_folder }}/{{ containerd[containerd_version].source_url | basename }}"
         checksum_algorithm: "{{ containerd[containerd_version].checksum_algorithm }}"
       register: downloader_distr
-      delegate_to: "{{ downloader }}"
+      delegate_to: localhost
 
     # Выкачиваем архив напрямую из сети интернет
     # Если:
@@ -72,20 +72,8 @@
         dest: "{{ downloader_source_folder }}"
         checksum: "{{ containerd[containerd_version].checksum_algorithm }}:{{ containerd[containerd_version].archive_checksum }}"
       run_once: true
-      delegate_to: "{{ downloader }}"
+      delegate_to: localhost
       when: downloader_distr.stat.checksum|default() != containerd[containerd_version].archive_checksum
-
-    # Выполняем синхронизацию архива с удаленной машиной
-    # Если:
-    ## downloader сервером не является localhost (не та машина на которой осуществляется запуск playbook)
-    - name: CONTAINERD | Copy from {{ downloader }} to remote host
-      synchronize:
-        checksum: true
-        src: "{{ downloader_source_folder }}/{{ containerd[containerd_version].source_url | basename }}"
-        dest: "{{ distribution_path }}"
-      delegate_to: "{{ downloader }}"
-      notify: CONTAINERD | Ensure service is stopped
-      when: downloader != "localhost"
 
     # Выполняем копирование архива на удаленную машину
     # Если:
@@ -98,7 +86,6 @@
         group: root
         mode: u+rwx
       notify: CONTAINERD | Ensure service is stopped
-      when: downloader == "localhost"
   when:
     - install_containerd|default(false)
     - use_downloader
