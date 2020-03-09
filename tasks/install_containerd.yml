@@ -2,7 +2,7 @@
 # Проверяем наличие бинарных файлов
 - name: CONTAINERD | Check containerd binary exists
   stat:
-    path: "{{ bin_path }}/{{ item }}"
+    path: "{{ containerd_bin_path }}/{{ item }}"
     checksum_algorithm: "{{ containerd[containerd_version].checksum_algorithm }}"
   register: containerd_bin
   loop: "{{ containerd_bin_name }}"
@@ -116,10 +116,10 @@
 # Распаковываем архив на удаленном сервере
 # Если:
 ## Переменная install_containerd=true
-- name: CONTAINERD | Extract containerd archive into {{ bin_path }}
+- name: CONTAINERD | Extract containerd archive into {{ containerd_bin_path }}
   unarchive:
     src: "{{ distribution_path }}/{{ containerd[containerd_version].source_url | basename }}"
-    dest: "{{ bin_path }}"
+    dest: "{{ containerd_bin_path }}"
     owner: root
     group: root
     remote_src: true

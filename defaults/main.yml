@@ -8,15 +8,23 @@ distribution_path: "/opt/DISTR"
 # Устаноавливаемая версия
 containerd_version: v1.3.3
 # Root директория для компонентов
-bin_path: /usr/local/bin
+containerd_bin_path: /usr/local/bin
+runc_bin_path: "{{ containerd_bin_path }}"
+kata_bin_path: "{{ containerd_bin_path }}"
+
+# Список runtimes для контейнеров
+containerd_runtimes:
+  - runc
+#  - kata
+
 # Имена устанавливаемых компонентов
 containerd_bin_name:
-    - containerd
-    - containerd-shim
-    - containerd-shim-runc-v1
-    - containerd-shim-runc-v2
-    - containerd-stress
-    - ctr
+  - containerd
+  - containerd-shim
+  - containerd-shim-runc-v1
+  - containerd-shim-runc-v2
+  - containerd-stress
+  - ctr
 
 # Папка для конфигурационных файлов
 containerd_conf_dir: /etc/containerd
@@ -26,7 +34,6 @@ containerd_data_dir: /var/lib/containerd
 containerd_plugin_dir: /opt/containerd
 # Containerd options
 containerd_use_systemd_cgroup: false
-
 
 containerd:
   v1.3.3:
