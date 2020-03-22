@@ -56,7 +56,7 @@
       delegate_to: localhost
 
     # Проверяем наличие архива на downloader сервере
-    - name: CONTAINERD | Check that the containerd archive exists on the {{ downloader }}
+    - name: CONTAINERD | Check that the containerd archive exists on the localhost
       stat:
         path: "{{ downloader_source_folder }}/{{ containerd[containerd_version].source_url | basename }}"
         checksum_algorithm: "{{ containerd[containerd_version].checksum_algorithm }}"
@@ -66,7 +66,7 @@
     # Выкачиваем архив напрямую из сети интернет
     # Если:
     ## Если архива нет на downloader сервере или Контрольная сумма архива не совпадает с указанной в переменной - containerd[containerd_version].archive_checksum)
-    - name: CONTAINERD | Download containerd archive to {{ downloader }}
+    - name: CONTAINERD | Download containerd archive to localhost
       get_url:
         url: "{{ containerd[containerd_version].source_url }}"
         dest: "{{ downloader_source_folder }}"
@@ -78,7 +78,7 @@
     # Выполняем копирование архива на удаленную машину
     # Если:
     ## downloader сервером является localhost (машина на которой осуществляется запуск playbook)
-    - name: CONTAINERD | Copy from {{ downloader }} to remote host
+    - name: CONTAINERD | Copy from localhost to remote host
       copy:
         src: "{{ downloader_source_folder }}/{{ containerd[containerd_version].source_url | basename }}"
         dest: "{{ distribution_path }}"
