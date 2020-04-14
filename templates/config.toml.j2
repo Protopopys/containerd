@@ -6,7 +6,7 @@ required_plugins = []
 oom_score = 0
 
 [grpc]
-  address = "{{ containerd_state_dir }}/containerd.sock"
+  address = "/run/containerd/containerd.sock"
   tcp_address = ""
   tcp_tls_cert = ""
   tcp_tls_key = ""
