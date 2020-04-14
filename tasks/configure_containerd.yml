@@ -6,10 +6,12 @@
     state: directory
     owner: root
     group: root
-    mode: u+rwx
+    mode: "0711"
   loop:
     - "{{ containerd_conf_dir }}"
     - "{{ containerd_plugin_dir }}"
+    - "{{ containerd_state_dir }}"
+    - "{{ containerd_data_dir }}"
 
 # Создаем конфигурационный файл systemd сервиса CONTAINERD    
 - name: CONTAINERD | Creating containerd.service file
@@ -25,7 +27,7 @@
     dest: "{{ containerd_conf_dir }}/config.toml"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify: CONTAINERD | Restart containerd
 
 # Запускаем принудительное исполнение handlers

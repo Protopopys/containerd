@@ -1,12 +1,12 @@
 version = 2
 root = "{{ containerd_data_dir }}"
-state = "/run/containerd"
+state = "{{ containerd_state_dir }}"
 disabled_plugins = ["io.containerd.snapshotter.v1.btrfs", "io.containerd.snapshotter.v1.aufs", "io.containerd.snapshotter.v1.zfs", "io.containerd.snapshotter.v1.devmapper"]
 required_plugins = []
 oom_score = 0
 
 [grpc]
-  address = "/run/containerd/containerd.sock"
+  address = "{{ containerd_state_dir }}/containerd.sock"
   tcp_address = ""
   tcp_tls_cert = ""
   tcp_tls_key = ""

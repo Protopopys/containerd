@@ -32,6 +32,9 @@ containerd_conf_dir: /etc/containerd
 containerd_data_dir: /var/lib/containerd
 # Папка для плагинов
 containerd_plugin_dir: /opt/containerd
+# Папка для запущенных контейнеров
+containerd_state_dir: /run/containerd
+
 # Containerd options
 containerd_use_systemd_cgroup: false
 
