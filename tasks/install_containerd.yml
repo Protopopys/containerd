@@ -23,6 +23,11 @@
     - name: CONTAINERD | Get service facts
       service_facts: {}
 
+    - name: CONTAINERD | Set 'first_install' to true
+      set_fact:
+        first_install: true
+      when: "'containerd.service' not in services"
+
     # Создаем папки на удаленной машине
     - name: CONTAINERD | Creating folders
       file:
@@ -31,7 +36,7 @@
         owner: root
         group: root
         mode: u+rwx
-      
+
     # Проверяем наличие архива на удаленной машине
     - name: CONTAINERD | Check that the containerd archive exists on the destination host
       stat:
@@ -85,7 +90,6 @@
         owner: root
         group: root
         mode: u+rwx
-      notify: CONTAINERD | Ensure service is stopped
   when:
     - install_containerd|default(false)
     - use_downloader
@@ -103,15 +107,19 @@
     checksum: "{{ containerd[containerd_version].checksum_algorithm }}:{{ containerd[containerd_version].archive_checksum }}"
     owner: root
     group: root
-  notify: CONTAINERD | Ensure service is stopped
   when:
     - install_containerd|default(false)
     - not use_downloader
     - containerd_archive.stat.checksum|default() != containerd[containerd_version].archive_checksum
 
-# Запускаем принудительное исполнение handlers
-- name: CONTAINERD | Flush handlers
-  meta: flush_handlers
+# Останавливаем сервис
+- name: CONTAINERD | Ensure service is stopped
+  service:
+    name: containerd
+    state: stopped
+  when:
+    - install_containerd|default(false)
+    - "not first_install|default(false)"
 
 # Распаковываем архив на удаленном сервере
 # Если:

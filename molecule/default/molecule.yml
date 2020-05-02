@@ -3,16 +3,70 @@ dependency:
   name: galaxy
 driver:
   name: docker
-lint:
-  name: yamllint
-platforms:
-  - name: instance
-    image: centos:7
-provisioner:
-  name: ansible
-  lint:
-    name: ansible-lint
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
 verifier:
   name: testinfra
-  lint:
-    name: flake8
+platforms:
+  - name: Ubuntu16.04
+    hostname: ubuntu_16.04
+    image: protopopys/systemd-ubuntu:16.04
+    override_command: False
+    tty: True
+    privileged: True
+    security_opts:
+      - seccomp=unconfigured
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    tmpfs:
+      - /tmp
+      - /run/lock
+
+  - name: Ubuntu18.04
+    hostname: ubuntu_18.04
+    image: protopopys/systemd-ubuntu:18.04
+    override_command: False
+    tty: True
+    privileged: True
+    security_opts:
+      - seccomp=unconfigured
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    tmpfs:
+      - /tmp
+      - /run/lock
+
+#  - name: Ubuntu20.04
+#    hostname: ubuntu_20.04
+#    image: protopopys/systemd-ubuntu:20.04
+#    override_command: False
+#    tty: True
+#    privileged: True
+#    security_opts:
+#      - seccomp=unconfigured
+#    volumes:
+#      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+#    tmpfs:
+#      - /tmp
+#      - /run/lock
+
+  - name: Centos7
+    hostname: centos_7
+    image: protopopys/systemd-centos:7
+    override_command: False
+    tty: True
+    privileged: True
+    security_opts:
+      - seccomp=unconfigured
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    tmpfs:
+      - /tmp
+      - /run/lock
+
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}

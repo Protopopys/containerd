@@ -19,6 +19,7 @@
     src: containerd.service.j2
     dest: /etc/systemd/system/containerd.service
   notify: CONTAINERD | Reload systemd
+  register: containerd_systemd_config
 
 # Создаем конфигурационный файл CONTAINERD
 - name: CONTAINERD | Creating configuration file for containerd service
@@ -28,11 +29,22 @@
     owner: root
     group: root
     mode: "0644"
-  notify: CONTAINERD | Restart containerd
+  register: containerd_config
 
 # Запускаем принудительное исполнение handlers
 - name: CONTAINERD | Flush handlers
   meta: flush_handlers
+
+# Перезагружаем сервис
+- name: CONTAINERD | Restart containerd
+  service:
+    name: containerd
+    state: restarted
+    enabled: true
+  when:
+    - containerd_config.changed
+    - containerd_systemd_config.changed
+    - "not first_install|default(false)"
 
 # Убеждаемся что CONTAINERD сервис запущен и добавлен в автозапуск  
 - name: CONTAINERD | Ensure containerd service is started and enabled at boot

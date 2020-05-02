@@ -1,16 +1,20 @@
 ---
+# Импортируем задание подготовки операционной системы
+# Importing an operating system preparation task
 - name: CONTAINERD | Importing bootstrap os task
   import_tasks: "bootstrap_system.yml"
   tags:
     - bootstrap
 
 # Импортируем задание развертывания
+# Importing an installation task
 - name: CONTAINERD | Importing CONTAINERD installation task
   import_tasks: "install_containerd.yml"
   tags:
     - install
 
 # Импортируем задание конфигурирования
+# Importing a configuration task
 - name: CONTAINERD | Importing CONTAINERD configuration task
   import_tasks: "configure_containerd.yml"
   tags:
