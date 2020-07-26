@@ -79,17 +79,17 @@ oom_score = 0
           container_annotations = []
           privileged_without_host_devices = false
           [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-            NoPivotRoot = false
-            NoNewKeyring = false
-            ShimCgroup = ""
-            IoUid = 0
-            IoGid = 0
-            BinaryName = "{{ runc_bin_path }}/runc"
-            Root = ""
-            CriuPath = ""
-            SystemdCgroup = {{ containerd_use_systemd_cgroup|lower }}
-            CriuImagePath = ""
-            CriuWorkPath = ""
+            no_pivot_root = false
+            no_new_keyring = false
+            shim_cgroup = ""
+            io_uid = 0
+            io_gid = 0
+            binary_name = "{{ runc_bin_path }}/runc"
+            root = ""
+            criu_path = ""
+            systemd_cgroup = {{ containerd_use_systemd_cgroup|lower }}
+            criu_image_path = ""
+            criu_work_path = ""
 {% if 'kata' in containerd_runtimes %}
         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.kata]
           runtime_type = "io.containerd.kata.v2"
@@ -98,15 +98,15 @@ oom_score = 0
         [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.katacli]
           runtime_type = "io.containerd.runc.v1"
           [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.katacli.options]
-            NoPivotRoot = false
-            NoNewKeyring = false
-            ShimCgroup = ""
-            IoUid = 0
-            IoGid = 0
-            BinaryName = "{{ kata_bin_path }}/kata-runtime"
-            Root = ""
-            CriuPath = ""
-            SystemdCgroup = {{ containerd_use_systemd_cgroup|lower }}
+            no_pivot_root = false
+            no_new_keyring = false
+            shim_cgroup = ""
+            io_uid = 0
+            io_gid = 0
+            binary_name = "{{ kata_bin_path }}/kata-runtime"
+            root = ""
+            criu_path = ""
+            systemd_cgroup = {{ containerd_use_systemd_cgroup|lower }}
 {% endif %}
     [plugins."io.containerd.grpc.v1.cri".cni]
       bin_dir = "/opt/cni/bin"

@@ -1,4 +1,6 @@
 ---
 required_packages:
   - libseccomp-dev
+  - btrfs-progs
   - socat
+# todo 'libbtrfs-dev' for Ubuntu 19.10 +
