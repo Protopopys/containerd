@@ -1,0 +1,5 @@
+---
+- name: Containerd
+  hosts: containerd
+  roles:
+    - { role: containerd, tags: containerd }

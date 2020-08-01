@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include ansible-containerd"
-      include_role:
-        name: "ansible-containerd"

@@ -1,4 +1,8 @@
 ---
+# Получаем информацию о сервисах на удаленной машине
+- name: CONTAINERD | Get service facts
+  service_facts: {}
+
 # Импортируем задание подготовки операционной системы
 # Importing an operating system preparation task
 - name: CONTAINERD | Importing bootstrap os task

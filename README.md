@@ -1,4 +1,4 @@
-![Molecule Test](https://github.com/Protopopys/ansible-containerd/workflows/Molecule%20Test/badge.svg)
+![Molecule Test](https://github.com/Protopopys/containerd/workflows/Molecule%20Test/badge.svg)
 
-# ansible-containerd
+# Containerd
 Ansible role for installing Containerd

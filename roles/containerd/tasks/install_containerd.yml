@@ -19,15 +19,6 @@
 
 - name: CONTAINERD |(when install_containerd == TRUE)
   block:
-    # Получаем информацию о сервисах на удаленной машине
-    - name: CONTAINERD | Get service facts
-      service_facts: {}
-
-    - name: CONTAINERD | Set 'first_install' to true
-      set_fact:
-        first_install: true
-      when: "'containerd.service' not in services"
-
     # Создаем папки на удаленной машине
     - name: CONTAINERD | Creating folders
       file:
@@ -114,12 +105,12 @@
 
 # Останавливаем сервис
 - name: CONTAINERD | Ensure service is stopped
-  service:
+  systemd:
     name: containerd
     state: stopped
   when:
     - install_containerd|default(false)
-    - "not first_install|default(false)"
+    - "'containerd.service' in services"
 
 # Распаковываем архив на удаленном сервере
 # Если:

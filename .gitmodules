@@ -1,0 +1,6 @@
+[submodule "roles/cri-tools"]
+	path = roles/cri-tools
+	url = git@github.com:Protopopys/cri-tools.git
+[submodule "roles/runc"]
+	path = roles/runc
+	url = git@github.com:Protopopys/runc.git

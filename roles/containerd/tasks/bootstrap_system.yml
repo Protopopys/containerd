@@ -4,21 +4,21 @@
 
 - name: CONTAINERD | Install the packages required for the components of the cluster
   apt:
-    name: "{{ required_packages }}"
+    name: "{{ containerd_required_packages }}"
     update_cache: true
     state: present
   when: ansible_distribution | lower in ['ubuntu','debian']
 
 - name: CONTAINERD | Install the packages required for the components of the cluster
   yum:
-    name: "{{ required_packages }}"
+    name: "{{ containerd_required_packages }}"
     update_cache: true
     state: present
   when: ansible_distribution | lower in ['redhat','centos']
 
 - name: CONTAINERD | Install the packages required for the components of the cluster
   apt_rpm:
-    name: "{{ required_packages | join(', ') }}"
+    name: "{{ containerd_required_packages | join(', ') }}"
     update_cache: true
     state: present
   when: ansible_distribution | lower in ['altlinux']

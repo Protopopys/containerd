@@ -1,5 +1,5 @@
 ---
-required_packages:
+containerd_required_packages:
   - libseccomp-dev
   - btrfs-tools
   - socat
