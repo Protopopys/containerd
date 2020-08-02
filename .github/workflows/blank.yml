@@ -6,7 +6,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./roles/containerd/
+    working-directory: roles/containerd/
 
 jobs:
   build:
@@ -15,6 +15,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
         with:
-          path: "${{ github.repository }}"
+          path: containerd
       - name: molecule
         uses: robertdebock/molecule-action@2.6.1
