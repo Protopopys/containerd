@@ -14,5 +14,4 @@ jobs:
           path: "${{ github.repository }}"
       - name: molecule
         uses: robertdebock/molecule-action@2.6.1
-        with:
-          path: "${{ github.repository }}/roles/containerd/"
+        working-directory: "${{ github.repository }}/roles/containerd/"
