@@ -4,17 +4,29 @@ name: Molecule Test
 on:
   - push
 
-defaults:
-  run:
-    working-directory: roles/containerd/
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 2
+      matrix:
+        python-version: [3.7, 3.8]
+
     steps:
       - name: checkout
         uses: actions/checkout@v2
         with:
-          path: containerd
-      - name: molecule
-        uses: robertdebock/molecule-action@2.6.1
+          path: "${{ github.repository }}"
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo apt install docker
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Test with molecule
+        working-directory: roles/containerd/
+        run: |
+          molecule test
