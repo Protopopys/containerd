@@ -10,7 +10,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: [3.8]
 
     steps:
       - name: checkout
@@ -24,7 +24,6 @@ jobs:
       - name: Install dependencies
         working-directory: "${{ github.repository }}"
         run: |
-          sudo apt-get install docker -y
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Test with molecule
