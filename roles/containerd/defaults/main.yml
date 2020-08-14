@@ -6,7 +6,7 @@ downloader_source_folder: ~/DISTR
 distribution_path: "/opt/DISTR"
 
 # Устаноавливаемая версия
-containerd_version: v1.3.6
+containerd_version: v1.3.7
 # Root директория для компонентов
 containerd_bin_path: /usr/local/bin
 runc_bin_path: "{{ containerd_bin_path }}"
@@ -79,7 +79,6 @@ containerd:
         checksum: cd4d2c036a81740bd19b38bb4a352865df3c0c556b998ea59b6ad36d01f00049
     ctr:  
         checksum: 3f30d53003569acb9ee9796b6b6aae39a54eb46116582e79695230cf5bc6ab0d
-
   v1.3.6:
     source_url: https://github.com/containerd/containerd/releases/download/v1.3.6/containerd-1.3.6-linux-amd64.tar.gz
     # Контрольная сумма скачаемого архива
@@ -100,3 +99,23 @@ containerd:
         checksum: 7c4f7bfe1011ae224a70a53483f48ba4afef85a57c18cc6624c4f829aa6e3d3a
     ctr:  
         checksum: 420d2840e999c38a5e5c96022be4932ad9beac9aca4f9496dfcfd7878604a5ac
+  v1.3.7:
+    source_url: https://github.com/containerd/containerd/releases/download/v1.3.7/containerd-1.3.7-linux-amd64.tar.gz
+    # Контрольная сумма скачаемого архива
+    checksum_algorithm: "sha256"
+    archive_checksum: 5bfa0524492ec7f3ba96ea91d3b36dfa6b1fa9e38b9d61658df93cd9458b3144
+    # Параметр распаковки архива на удаленном сервере
+    extra_opts: --strip-components=1
+    # Контрольная сумма бинарных файлов
+    containerd:
+        checksum: 29a0b49db854daa85b53d14af92740ecbab0bed4777b52d304cb4e3c9444fcf5
+    containerd-shim:  
+        checksum: af5ebee6e9b387920d72ad075e51835f2f3215b3ec407b28491ae7383c283d76
+    containerd-shim-runc-v1:  
+        checksum: cd180f864905f86f39ee62c2336a9075e4c61cb34a090e26e38f1534be19d852
+    containerd-shim-runc-v2: 
+        checksum: 512d1520c35ad5e46b3b6e843dcc7ee1012feb0f4863b5b4c27baeb750d37085
+    containerd-stress:  
+        checksum: 83a498653164dbca3e784cb578220fe4e6051cafb0b5f2b70f763ec6ba79b9b4
+    ctr:  
+        checksum: 52e39c127ae6d30c50514b263fcdf273a3ccac72356cfc6bfc2da1ca48cf120a
